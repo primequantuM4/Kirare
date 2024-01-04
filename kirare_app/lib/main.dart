@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 
 void main() {
   runApp(const KirareApp());
@@ -19,6 +21,8 @@ class _KirareAppState extends State<KirareApp> {
   late final AudioRecorder audioRecord;
   bool isRecording = false;
   String audioPath = '';
+  int elapsedTimeinSeconds = 0;
+  Timer? recordingTimer;
 
   Future<String> getDownloadsPath() async {
     Directory? downloadsDirectory = await getDownloadsDirectory();
@@ -37,15 +41,40 @@ class _KirareAppState extends State<KirareApp> {
     super.dispose();
   }
 
+  void startRecordingTimer() {
+    recordingTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (!isRecording) {
+        timer.cancel();
+      } else {
+        setState(() {
+          elapsedTimeinSeconds++;
+        });
+      }
+    });
+  }
+
   Future<void> startRecording() async {
+    int randomNumber = Random().nextInt(100000) + Random().nextInt(200000);
+
     try {
       if (await audioRecord.hasPermission()) {
         String musicPath = await getDownloadsPath();
-        await audioRecord.start(const RecordConfig(), path: "$musicPath/x.wav");
+        await audioRecord.start(
+          const RecordConfig(),
+          path: "$musicPath/kirare_$randomNumber.wav",
+        );
 
         setState(() {
           isRecording = true;
+          elapsedTimeinSeconds = 0;
         });
+
+        startRecordingTimer();
+
+        // After recording for 31 seconds stop recording not 30 seconds
+        if (elapsedTimeinSeconds > 30) {
+          await stopRecording();
+        }
       }
     } catch (e) {
       print('Error: $e');
@@ -53,7 +82,8 @@ class _KirareAppState extends State<KirareApp> {
   }
 
   Future<void> stopRecording() async {
-      print(isRecording);
+    print(isRecording);
+    print("Has recorded: $elapsedTimeinSeconds seconds");
     try {
       final String? path = await audioRecord.stop();
       setState(() {
@@ -70,17 +100,25 @@ class _KirareAppState extends State<KirareApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: RecordingButton(
-            onRecord: () async{
-                if (isRecording){
+        body: Column(
+          children: [
+            Center(
+              child: RecordingButton(
+                onRecord: () async {
+                  if (isRecording) {
                     await stopRecording();
-                }else{
+                  } else {
                     await startRecording();
-                }
-            },
-            iconColor: isRecording ? Colors.red : Colors.white,
-          ),
+                  }
+                },
+                iconColor: isRecording ? Colors.red : Colors.white,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => {print("I have restarted")},
+              child: const Text("Check for restart"),
+            )
+          ],
         ),
       ),
     );
