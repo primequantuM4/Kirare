@@ -71,10 +71,8 @@ class _KirareAppState extends State<KirareApp> {
 
         startRecordingTimer();
 
-        // After recording for 31 seconds stop recording not 30 seconds
-        if (elapsedTimeinSeconds > 30) {
-          await stopRecording();
-        }
+        await Future.delayed(const Duration(seconds: 31));
+        await stopRecording();
       }
     } catch (e) {
       print('Error: $e');
@@ -100,25 +98,17 @@ class _KirareAppState extends State<KirareApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Column(
-          children: [
-            Center(
-              child: RecordingButton(
-                onRecord: () async {
-                  if (isRecording) {
-                    await stopRecording();
-                  } else {
-                    await startRecording();
-                  }
-                },
-                iconColor: isRecording ? Colors.red : Colors.white,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => {print("I have restarted")},
-              child: const Text("Check for restart"),
-            )
-          ],
+        body: Center(
+          child: RecordingButton(
+            onRecord: () async {
+              if (isRecording) {
+                await stopRecording();
+              } else {
+                await startRecording();
+              }
+            },
+            iconColor: isRecording ? Colors.red : Colors.white,
+          ),
         ),
       ),
     );
