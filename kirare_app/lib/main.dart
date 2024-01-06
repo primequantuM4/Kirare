@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:kirare_app/data.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
@@ -84,6 +85,7 @@ class _KirareAppState extends State<KirareApp> {
     print("Has recorded: $elapsedTimeinSeconds seconds");
     try {
       final String? path = await audioRecord.stop();
+      await sendAudio(path!);
       setState(() {
         isRecording = false;
         audioPath = path!;
