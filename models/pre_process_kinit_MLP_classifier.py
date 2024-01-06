@@ -3,6 +3,7 @@ import math
 import os
 
 import librosa
+import numpy as np
 
 DATASET_PATH = os.getcwd() + "/../../../EMIR_Dataset_V1"
 JSON_PATH = "data.json"
@@ -15,7 +16,7 @@ SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
 def preprocess_audio(audio_path, duration=30, num_segments=5):
     # Segment the audio and extract MFCC features for each segment
     segments = []
-    signal, sr = librosa.load(audio_path)
+    signal, sr = librosa.load(audio_path, duration=duration, sr=SAMPLE_RATE)
     samples_per_segment = len(signal) // num_segments
     expected_mfcc = math.ceil(samples_per_segment / 512)
     for i in range(num_segments):
@@ -35,6 +36,29 @@ def preprocess_audio(audio_path, duration=30, num_segments=5):
             segments.append(mfcc.tolist())
 
     return segments
+
+
+def preprocess_chunk_audio(audio_path, duration=6):
+    signal, sr = librosa.load(audio_path, sr=SAMPLE_RATE, duration=duration)
+
+    mfcc = librosa.feature.mfcc(
+        y=signal,
+        sr=sr,
+        n_fft=2048,
+        n_mfcc=13,
+        hop_length=512,
+    )
+    mfcc = mfcc.T
+    samples_per_segment = len(signal)
+    expected_mfcc = math.ceil(samples_per_segment / 512)
+
+    print(expected_mfcc, "fsomehgdigkcmcnskl")
+    print(mfcc.shape)
+
+    if len(mfcc) == expected_mfcc:
+        return mfcc.tolist()
+    else:
+        return None
 
 
 def save_mfcc(
