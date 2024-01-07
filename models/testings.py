@@ -4,31 +4,7 @@ from collections import Counter
 from typing import List
 
 import numpy as np
-
 from pre_process_kinit_MLP_classifier import preprocess_audio, preprocess_chunk_audio
-
-
-def predict(model, X):
-    X = np.array(X)
-    X = X[..., np.newaxis]
-
-    predictions = model.predict(X)
-    predicted_index = np.argmax(predictions, axis=1)
-    return predicted_index
-
-
-def predict_six_seconds(model, X):
-    X = np.array(X)
-    X = X[np.newaxis, ..., np.newaxis]
-
-    predictions = model.predict(X)
-    predicted_index = np.argmax(predictions, axis=1)
-
-    return predicted_index
-
-
-with open("model_pickle", "rb") as f:
-    model = pickle.load(f)
 
 
 def determine_kinit(music_determination: List[int]):
@@ -43,7 +19,7 @@ def determine_kinit(music_determination: List[int]):
     prediction_freq = Counter(music_determination)
     max_freq = max(prediction_freq, key=lambda x: prediction_freq[x])
     print(max_freq, mapping[max_freq], prediction_freq)
-    if prediction_freq[max_freq] < 2:
+    if prediction_freq[max_freq] < 3:
         return mapping[4]
     return mapping[max_freq]
 
@@ -58,8 +34,46 @@ def determine_six_second_kinit(prediction):
     return mapping[prediction[0]]
 
 
-music_path = os.getcwd() + "/jumper.wav"
-X = preprocess_audio(music_path)
-Y = preprocess_chunk_audio(music_path)
-print(determine_kinit(predict(model, X)))
-print(predict_six_seconds(model, Y))
+def predict(model, X):
+    X = np.array(X)
+    X = X[..., np.newaxis]
+
+    predictions = model.predict(X)
+    predicted_index = np.argmax(predictions, axis=1)
+    return determine_kinit(predicted_index)
+
+
+def predict_six_seconds(model, X):
+    X = np.array(X)
+    X = X[np.newaxis, ..., np.newaxis]
+
+    predictions = model.predict(X)
+    predicted_index = np.argmax(predictions, axis=1)
+
+    return determine_six_second_kinit(predicted_index)
+
+
+def load_and_predict(music_path):
+    X = preprocess_audio(music_path)
+    return predict(model, X)
+
+
+def load_and_predict_six(music_path):
+    X = preprocess_chunk_audio(music_path)
+
+    return predict_six_seconds(model, X)
+
+
+def testings_wording():
+    print("This code works")
+
+
+with open("../models/model_pickle", "rb") as f:
+    model = pickle.load(f)
+
+
+# music_path = os.getcwd() + "/Bati8.wav"
+# X = preprocess_audio(music_path)
+# Y = preprocess_chunk_audio(music_path)
+# print(predict(model, X))
+# print(predict_six_seconds(model, Y))
