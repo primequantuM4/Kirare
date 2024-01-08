@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:kirare_app/data.dart';
+import 'package:kirare_app/recording_button_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
@@ -85,10 +86,10 @@ class _KirareAppState extends State<KirareApp> {
     print("Has recorded: $elapsedTimeinSeconds seconds");
     try {
       final String? path = await audioRecord.stop();
-      await sendAudio(path!);
+      await sendAudio(path!, elapsedTimeinSeconds);
       setState(() {
         isRecording = false;
-        audioPath = path!;
+        audioPath = path;
         print(audioPath);
       });
     } catch (e) {
@@ -117,29 +118,3 @@ class _KirareAppState extends State<KirareApp> {
   }
 }
 
-class RecordingButton extends StatelessWidget {
-  final VoidCallback onRecord;
-  final Color? iconColor;
-
-  const RecordingButton({
-    super.key,
-    required this.onRecord,
-    required this.iconColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RawMaterialButton(
-      onPressed: onRecord,
-      padding: const EdgeInsets.all(75),
-      fillColor: Colors.blue,
-      elevation: 5.0,
-      shape: const CircleBorder(),
-      child: Icon(
-        Icons.music_note,
-        color: iconColor,
-        size: 30,
-      ),
-    );
-  }
-}

@@ -1,7 +1,7 @@
 import random
 import sys
 
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from lazy_loader import os
 
 sys.path.append("../models")
@@ -9,8 +9,6 @@ sys.path.append("../models")
 from testings import load_and_predict, load_and_predict_six
 
 app = Flask(__name__)
-
-music_file = os.getcwd() + "/Bati8.wav"
 
 
 @app.route("/upload-audio", methods=["POST"])
