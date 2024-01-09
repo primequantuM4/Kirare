@@ -1,9 +1,11 @@
 import os
 import pickle
+
 from collections import Counter
 from typing import List
-
 import numpy as np
+from tensorflow import keras
+
 from pre_process_kinit_MLP_classifier import preprocess_audio, preprocess_chunk_audio
 
 
@@ -31,6 +33,7 @@ def determine_six_second_kinit(prediction):
         2: "Ambassel",
         3: "Bati",
     }
+    print(mapping[prediction[0]])
     return mapping[prediction[0]]
 
 
@@ -54,11 +57,13 @@ def predict_six_seconds(model, X):
 
 
 def load_and_predict(music_path):
+    model = keras.models.load_model("../models/win_model.h5")
     X = preprocess_audio(music_path)
     return predict(model, X)
 
 
 def load_and_predict_six(music_path):
+    model = keras.models.load_model("../models/win_model.h5")
     X = preprocess_chunk_audio(music_path)
 
     return predict_six_seconds(model, X)
@@ -68,12 +73,15 @@ def testings_wording():
     print("This code works")
 
 
-with open("../models/model_pickle", "rb") as f:
-    model = pickle.load(f)
-
-
-# music_path = os.getcwd() + "/Bati8.wav"
+# with open("../models/win_model_pickle", "rb") as f:
+#     model = pickle.load(f)
+# model = keras.models.load_model("../models/win_model.h5")
+#
+#
+# music_path = os.getcwd() + "/Ambassel100.wav"
 # X = preprocess_audio(music_path)
 # Y = preprocess_chunk_audio(music_path)
 # print(predict(model, X))
 # print(predict_six_seconds(model, Y))
+#
+

@@ -75,24 +75,29 @@ X_train, X_validate, X_test, Y_train, Y_validate, Y_test = train_validate_test_s
 )
 
 print(X_test[0].shape, "X test shape")
-# input_shape = (X_train.shape[1], X_train.shape[2], X_train.shape[3])
-# model = build_model(input_shape)
-#
-#
-# optimizer = keras.optimizers.Adam(learning_rate=0.0001)
-# model.compile(
-#     optimizer=optimizer, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
-# )
-#
-# model.fit(
-#     X_train,
-#     Y_train,
-#     validation_data=(X_validate, Y_validate),
-#     batch_size=32,
-#     epochs=100,
-# )
-#
-# test_error, test_accuracy = model.evaluate(X_test, Y_test, verbose=1)
-# print(test_accuracy)
-#
-#
+input_shape = (X_train.shape[1], X_train.shape[2], X_train.shape[3])
+
+model = build_model(input_shape)
+
+
+optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+model.compile(
+    optimizer=optimizer, loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+)
+
+model.fit(
+    X_train,
+    Y_train,
+    validation_data=(X_validate, Y_validate),
+    batch_size=32,
+    epochs=100,
+)
+
+test_error, test_accuracy = model.evaluate(X_test, Y_test, verbose=1)
+print(test_accuracy)
+
+with open('win_model_pickle', 'wb') as f:
+    pickle.dump(model, f)
+
+
+model.save("win_model.h5")

@@ -17,7 +17,10 @@ def upload_audio():
         return "No audio file uploaded", 400
 
     audio_file = request.files["audio"]
+    print("audio file has been processed", audio_file)
     second_duration = int(request.form["second_duration"])
+
+    print(second_duration)
 
     if audio_file.filename == "":
         return "No audio file selected", 400

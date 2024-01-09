@@ -86,12 +86,12 @@ class _KirareAppState extends State<KirareApp> {
     print("Has recorded: $elapsedTimeinSeconds seconds");
     try {
       final String? path = await audioRecord.stop();
-      await sendAudio(path!, elapsedTimeinSeconds);
       setState(() {
         isRecording = false;
-        audioPath = path;
+        audioPath = path!;
         print(audioPath);
       });
+      await sendAudio(path!, elapsedTimeinSeconds);
     } catch (e) {
       print("Error: $e");
     }
@@ -117,4 +117,3 @@ class _KirareAppState extends State<KirareApp> {
     );
   }
 }
-
