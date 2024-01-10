@@ -56,6 +56,7 @@ class _KirareAppState extends State<KirareApp> {
   }
 
   Future<void> startRecording() async {
+    // await sendTestRequest();
     int randomNumber = Random().nextInt(100000) + Random().nextInt(200000);
 
     try {
@@ -73,7 +74,7 @@ class _KirareAppState extends State<KirareApp> {
 
         startRecordingTimer();
 
-        await Future.delayed(const Duration(seconds: 31));
+        await Future.delayed(const Duration(seconds: 32));
         await stopRecording();
       }
     } catch (e) {

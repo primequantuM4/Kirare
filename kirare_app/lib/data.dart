@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 
 Future<void> sendAudio(String audioPath, int secondsDuration) async {
   String emulatorUrl = 'http://10.0.2.2:5000/upload-audio';
-  String deviceUrl = 'http://192.168.45.134/upload-audio';
+  String deviceUrl = 'http:///upload-audio';
 
   print('Sending audio to $emulatorUrl, long long long long string');
 
-  var request = http.MultipartRequest('POST', Uri.parse(emulatorUrl));
+  var request = http.MultipartRequest('POST', Uri.parse(deviceUrl));
   request.fields['name'] = 'audio';
   request.fields['second_duration'] = secondsDuration.toString();
 
@@ -23,6 +23,23 @@ Future<void> sendAudio(String audioPath, int secondsDuration) async {
     } else {
       print('Error: ${res.statusCode}');
     }
+  } catch (e) {
+    print(e);
+  }
+}
+
+// for debugging purposes
+Future<void> sendTestRequest() async {
+  String baseUrl = 'http://192.168.125.134:5000/hello';
+  print("Ezih gar bro derishalew");
+
+  try {
+    var testRequest = await http.get(Uri.parse(baseUrl));
+    if (testRequest.statusCode == 200) {
+      print(
+          "${testRequest.body} and so much more is there to the world and stuff");
+    }
+//
   } catch (e) {
     print(e);
   }

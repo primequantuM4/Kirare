@@ -43,6 +43,7 @@ def predict(model, X):
 
     predictions = model.predict(X)
     predicted_index = np.argmax(predictions, axis=1)
+    print(predicted_index)
     return determine_kinit(predicted_index)
 
 
@@ -75,13 +76,13 @@ def testings_wording():
 
 # with open("../models/win_model_pickle", "rb") as f:
 #     model = pickle.load(f)
-# model = keras.models.load_model("../models/win_model.h5")
-#
-#
-# music_path = os.getcwd() + "/Ambassel100.wav"
-# X = preprocess_audio(music_path)
+model = keras.models.load_model("../models/win_model.h5")
+# #
+# #
+music_path = os.getcwd() + "/kirare_229480.wav"
+X = preprocess_audio(music_path)
 # Y = preprocess_chunk_audio(music_path)
-# print(predict(model, X))
+print(predict(model, X))
 # print(predict_six_seconds(model, Y))
+# #
 #
-
