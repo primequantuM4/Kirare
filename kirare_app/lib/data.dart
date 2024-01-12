@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
-Future<void> sendAudio(String audioPath, int secondsDuration) async {
+Future<String> sendAudio(String audioPath, int secondsDuration) async {
   String emulatorUrl = 'http://10.0.2.2:5000/upload-audio';
   String deviceUrl = 'http:///upload-audio';
 
   print('Sending audio to $emulatorUrl, long long long long string');
 
-  var request = http.MultipartRequest('POST', Uri.parse(deviceUrl));
+  var request = http.MultipartRequest('POST', Uri.parse(emulatorUrl));
   request.fields['name'] = 'audio';
   request.fields['second_duration'] = secondsDuration.toString();
 
@@ -17,14 +17,18 @@ Future<void> sendAudio(String audioPath, int secondsDuration) async {
   try {
     var res = await request.send();
     var response = await http.Response.fromStream(res);
+    print(response.body);
+    print(res);
 
-    if (res.statusCode == 200) {
-      print(response.body);
+    if (response.statusCode == 200) {
+      print("Yay");
+      return response.body;
     } else {
-      print('Error: ${res.statusCode}');
+      print("Nay");
+      throw Exception('Failed to upload audio');
     }
   } catch (e) {
-    print(e);
+    throw Exception('Failed to upload audio');
   }
 }
 
