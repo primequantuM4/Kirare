@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:kirare_app/data.dart';
+import 'package:kirare_app/models/ScaleModel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 

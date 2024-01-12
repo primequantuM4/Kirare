@@ -17,14 +17,10 @@ Future<String> sendAudio(String audioPath, int secondsDuration) async {
   try {
     var res = await request.send();
     var response = await http.Response.fromStream(res);
-    print(response.body);
-    print(res);
 
     if (response.statusCode == 200) {
-      print("Yay");
       return response.body;
     } else {
-      print("Nay");
       throw Exception('Failed to upload audio');
     }
   } catch (e) {
@@ -35,15 +31,13 @@ Future<String> sendAudio(String audioPath, int secondsDuration) async {
 // for debugging purposes
 Future<void> sendTestRequest() async {
   String baseUrl = 'http://192.168.125.134:5000/hello';
-  print("Ezih gar bro derishalew");
 
   try {
     var testRequest = await http.get(Uri.parse(baseUrl));
     if (testRequest.statusCode == 200) {
-      print(
-          "${testRequest.body} and so much more is there to the world and stuff");
+      print("${testRequest.body} and so much more is there to the world and stuff");
     }
-//
+
   } catch (e) {
     print(e);
   }
