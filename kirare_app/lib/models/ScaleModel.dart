@@ -1,10 +1,8 @@
-
 class ScaleModel {
   final String name;
   final String description;
   final String braceletDiagram;
   final String braceletDiagramDescription;
-  final String tonnetzDiagram;
   final String tonnetzDiagramDescription;
   final String youtubeLink;
 
@@ -13,7 +11,6 @@ class ScaleModel {
     required this.description,
     required this.braceletDiagram,
     required this.braceletDiagramDescription,
-    required this.tonnetzDiagram,
     required this.tonnetzDiagramDescription,
     required this.youtubeLink,
   });
@@ -23,7 +20,6 @@ class ScaleModel {
         description = json['description'],
         braceletDiagram = json['braceletDiagram'],
         braceletDiagramDescription = json['braceletDiagramDescription'],
-        tonnetzDiagram = json['tonnetzDiagram'],
         tonnetzDiagramDescription = json['tonnetzDiagramDescription'],
         youtubeLink = json['youtubeLink'];
 }

@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:kirare_app/data.dart';
-import 'package:kirare_app/models/ScaleModel.dart';
+import 'package:kirare_app/data/data.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
@@ -27,16 +27,17 @@ class ScaleBloc extends Bloc<ScaleEvent, ScaleState> {
     final int createdDate = DateTime.now().millisecondsSinceEpoch;
 
     if (state is ScaleInitial) {
-      final _state = state as ScaleInitial;
+      final currentState = state as ScaleInitial;
       try {
-        if (await _state.recorder.hasPermission()) {
+        if (await currentState.recorder.hasPermission()) {
           String musicPath = await getDownloadsPath();
-          await _state.recorder.start(
+          await currentState.recorder.start(
             const RecordConfig(),
             path: "$musicPath/kirare_$createdDate.wav",
           );
           emit(
-            ScaleRecording(recorder: _state.recorder, elasedTimeInSeconds: 0),
+            ScaleRecording(
+                recorder: currentState.recorder, elasedTimeInSeconds: 0),
           );
         } else {
           emit(const ScaleError(error: ErrorType.permission));
@@ -50,24 +51,21 @@ class ScaleBloc extends Bloc<ScaleEvent, ScaleState> {
   _pingRecording(event, emit) async {
     if (state is ScaleRecording) {
       await Future.delayed(const Duration(seconds: 1));
-      final _state = state as ScaleRecording;
-      print(_state.elasedTimeInSeconds);
+      final currentState = state as ScaleRecording;
 
-      if (_state.elasedTimeInSeconds >= 30) {
+      if (currentState.elasedTimeInSeconds >= 6) {
         emit(ScaleRecorded());
         try {
-          final String? audioPath = await _state.recorder.stop();
+          final String? audioPath = await currentState.recorder.stop();
           final String kinitResult =
-              await sendAudio(audioPath!, _state.elasedTimeInSeconds);
-          print("kignit result in bloc, $kinitResult");
+              await sendAudio(audioPath!, currentState.elasedTimeInSeconds);
           final scaleResult = _getScale(kinitResult);
-          print("result in bloc, $scaleResult");
 
           emit(ScaleResult(result: scaleResult));
         } catch (e) {
           emit(const ScaleError(error: ErrorType.connection));
           await Future.delayed(const Duration(seconds: 2));
-          emit(ScaleInitial(recorder: _state.recorder));
+          emit(ScaleInitial(recorder: currentState.recorder));
         }
 
         return;
@@ -75,8 +73,8 @@ class ScaleBloc extends Bloc<ScaleEvent, ScaleState> {
 
       emit(
         ScaleRecording(
-          recorder: _state.recorder,
-          elasedTimeInSeconds: _state.elasedTimeInSeconds + 1,
+          recorder: currentState.recorder,
+          elasedTimeInSeconds: currentState.elasedTimeInSeconds + 1,
         ),
       );
     }
@@ -84,10 +82,10 @@ class ScaleBloc extends Bloc<ScaleEvent, ScaleState> {
 
   _cancelRecording(event, emit) async {
     if (state is ScaleRecording) {
-      final _state = state as ScaleRecording;
-      await _state.recorder.stop();
+      final currentState = state as ScaleRecording;
+      await currentState.recorder.stop();
       emit(
-        ScaleInitial(recorder: _state.recorder),
+        ScaleInitial(recorder: currentState.recorder),
       );
     }
   }
